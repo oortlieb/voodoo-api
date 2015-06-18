@@ -70,15 +70,15 @@ Expects two parameters, a list of models with their file locations to order and 
             "tax": 26381.46,
             "shipping": 0
         },
-        "shipping": {
-            "city": "New York",
-            "name": "Oliver Ortlieb",
-            "zip": "10003",
-            "street1": "320 2nd Ave",
-            "street2": "#5",
-            "state": "NY",
+        "shipping_info": {
+            "city": "Test city",
+            "name": "Test name",
+            "zip": "12345",
+            "street1": "123 Test Rd",
+            "street2": "#1", # optional!
+            "state": "AK",
             "country": "USA"
-        },
+        }
         "order_items": [
             {"material": 34, "id": 25, "qty": 1}
         ]
@@ -143,15 +143,15 @@ Material IDs are discovered using the /materials endpoint.
             "tax": 26381.46,
             "shipping": 0
         },
-        "shipping": {
-            "city": "New York",
-            "name": "Oliver Ortlieb",
-            "zip": "10003",
-            "street1": "320 2nd Ave",
-            "street2": "#5",
-            "state": "NY",
+        "shipping_info": {
+            "city": "Test city",
+            "name": "Test name",
+            "zip": "12345",
+            "street1": "123 Test Rd",
+            "street2": "#1", # optional!
+            "state": "AK",
             "country": "USA"
-        },
+        }
         "order_items": [
             {"material": 34, "id": 25, "qty": 1}
         ]
@@ -176,15 +176,15 @@ The endpoint accepts a single parameter, the id for the quote that you'd like to
             "tax": 26381.46,
             "shipping": 0
         },
-        "shipping": {
-            "city": "New York",
-            "name": "Oliver Ortlieb",
-            "zip": "10003",
-            "street1": "320 2nd Ave",
-            "street2": "#5",
-            "state": "NY",
+        "shipping_info": {
+            "city": "Test city",
+            "name": "Test name",
+            "zip": "12345",
+            "street1": "123 Test Rd",
+            "street2": "#1", # optional!
+            "state": "AK",
             "country": "USA"
-        },
+        }
         "order_items": [
             {"material": 34, "id": 25, "qty": 1}
         ]
