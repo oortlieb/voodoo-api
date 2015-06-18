@@ -11,6 +11,13 @@ The API only responds to HTTPS, so your key should be safe as long as you don't 
 ## Content type
 The API server only accepts parameters passed in a JSON encoded body. This also needs to be set in the headers.
 
+## Restrictions on uploaded files
+Only .STL and .OBJ files are accepted. The parser currently determines file type based on the extension of file in the download URL.
+
+    http://myfile.com/model.stl # parsed as STL
+    http://myfile.com/model.obj # parsed as OBJ
+    http://myfile.com/model     # won't work
+
 ## API Endpoints
 All endpoints are prefixed with:
 
@@ -28,10 +35,60 @@ Gets a list of available materials from the server.
      ...]
     # Truncated for brevity
 
+### POST /order/create_and_confirm
+Creates a model on the server, creates an order for it, and then confirms the order. Response contains the price paid for the model, shipping, and tax, along with an order id for your records.
+
+Expects two parameters, a list of models with their file locations to order and an address to ship them to. See the example:
+
+    # Example request body
+    {
+        "order_items": {[
+            {
+                "model": { "file_url": "http://myfile.com/file.stl", "dimensions": "mm" },
+                "material": 34,
+                "qty": 1
+            }
+        ]},
+
+        "shipping_info": {
+            "city": "Test city",
+            "name": "Test name",
+            "zip": "12345",
+            "street1": "123 Test Rd",
+            "street2": "#1", # optional!
+            "state": "AK",
+            "country": "USA"
+        }
+    }
+
+    # Response
+    {
+        "quote_id": "123456",
+        "quote": {
+            "items": 263814.55,
+            "total": 290196.01,
+            "tax": 26381.46,
+            "shipping": 0
+        },
+        "shipping": {
+            "city": "New York",
+            "name": "Oliver Ortlieb",
+            "zip": "10003",
+            "street1": "320 2nd Ave",
+            "street2": "#5",
+            "state": "NY",
+            "country": "USA"
+        },
+        "order_items": [
+            {"material": 34, "id": 25, "qty": 1}
+        ]
+    }
+
+
 ### POST /model
 Creates a model on the server. Response contains the ID used to refer to that model when constructing an order.
 
-Expects two parameters: the first the url of the file to use to create the model. Currently, only STL files will be correctly handled. The second parameter is the units of the STL file ("mm", "in")
+Expects two parameters: the first the url of the file to use to create the model. The second parameter is the units of the uploaded file ("mm", "in")
 
     # Example request body
     {
