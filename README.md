@@ -18,6 +18,17 @@ Only .STL and .OBJ files are accepted. The parser currently determines file type
     http://myfile.com/model.obj # parsed as OBJ
     http://myfile.com/model     # won't work
 
+## Shipping Errors
+In the case of an invalid address, you will get a response back like this one:
+
+    {
+       code: 'ADDRESS.VERIFY.FAILURE',
+       message: 'Default address: The address you entered was found but more information is needed (such as an apartment, suite, or box number) to match to a specific address.',
+       errors: []
+    },
+
+Please refer to the Easypost docs for more information about address verification errors.
+
 ## API Endpoints
 All endpoints are prefixed with:
 
