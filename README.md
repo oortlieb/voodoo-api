@@ -22,8 +22,8 @@ Only .STL and .OBJ files are accepted. The parser currently determines file type
 In the case of an invalid address, you will get a response back like this one:
 
     {
-       code: 'ADDRESS.VERIFY.FAILURE',
-       message: 'Default address: The address you entered was found but more information is needed (such as an apartment, suite, or box number) to match to a specific address.',
+       err_type: 'ADDR',
+       err_message: 'Default address: The address you entered was found but more information is needed (such as an apartment, suite, or box number) to match to a specific address.',
        errors: []
     },
 
