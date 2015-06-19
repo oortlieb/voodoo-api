@@ -63,7 +63,8 @@ Expects two parameters, a list of models with their file locations to order and 
 
     # Response
     {
-        "quote_id": "123456",
+        "order_id": 12,
+        "purchased": true,
         "quote": {
             "items": 263814.55,
             "total": 290196.01,
@@ -170,6 +171,7 @@ The endpoint accepts a single parameter, the id for the quote that you'd like to
     # Response
     {
         "order_id": "99999",
+        "purchased": true,
         "quote": {
             "items": 263814.55,
             "total": 290196.01,
