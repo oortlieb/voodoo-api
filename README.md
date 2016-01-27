@@ -32,7 +32,26 @@ Please refer to the Easypost docs for more information about address verificatio
 ## API Endpoints
 All endpoints are prefixed with:
 
-    https://api.voodoomfg.co/api/0
+    https://api.voodoomfg.com/api/1
+
+### POST /model
+Creates a model on the server. Response contains the ID used to refer to that model when constructing an order.
+
+Expects one parameters: the download url of the model you're creating.
+
+    # Example request body
+    {
+        "file_url": <url of object file>
+    }
+
+    # Example response
+    { 
+        id: 1696,
+        volume: 260616.764764193,
+        x: 97.4320030212402,
+        y: 122.105209350586,
+        z: 132.524459838867 
+    }
 
 ### GET /materials
 Gets a list of available materials from the server.
@@ -46,20 +65,38 @@ Gets a list of available materials from the server.
      ...]
     # Truncated for brevity
 
-### POST /order/create_and_confirm
-Creates a model on the server, creates an order for it, and then confirms the order. Response contains the price paid for the model, shipping, and tax, along with an order id for your records.
+### GET /model/quote
+Gets the quote for a single model file for a given quantity, material, and unit scale.
 
-Expects two parameters, a list of models with their file locations to order and an address to ship them to. See the example:
+Expects four parameters, the model id, material id, quantity, and selected units.
+
+    # Example request body
+    { 
+        model_id: 1696,
+        units: "mm",
+        material_id: 44,
+        qty: 1 
+    }
+
+    # Response
+    { 
+        model_id: 1696,
+        units: "mm",
+        material_id: 44,
+        qty: 1,
+        quote: 29.413041769720596,
+    }
+
+### POST /order/shipping
+Creates a shipment for the uploaded items and returns a list of shipping options for that shipment.
+
+Expects two parameters, a list of items to order and an address to ship them to. Use the "value" field in each entry to select that shipping option in the next step (creating an order).
 
     # Example request body
     {
-        "order_items": {[
-            {
-                "model": { "file_url": "http://myfile.com/file.stl", "dimensions": "mm" },
-                "material": 34,
-                "qty": 1
-            }
-        ]},
+        "models": [
+            {"material_id": 44, "model_id": 1696, "qty": 1, units: "mm"}
+        ],
 
         "shipping_info": {
             "city": "Test city",
@@ -73,134 +110,97 @@ Expects two parameters, a list of models with their file locations to order and 
     }
 
     # Response
-    {
-        "order_id": 12,
-        "purchased": true,
-        "quote": {
-            "items": 263814.55,
-            "total": 290196.01,
-            "tax": 26381.46,
-            "shipping": 0
-        },
-        "shipping_info": {
-            "city": "Test city",
-            "name": "Test name",
-            "zip": "12345",
-            "street1": "123 Test Rd",
-            "street2": "#1", # optional!
-            "state": "AK",
-            "country": "USA"
-        }
-        "order_items": [
-            {"material": 34, "id": 25, "qty": 1}
-        ]
-    }
-
-
-### POST /model
-Creates a model on the server. Response contains the ID used to refer to that model when constructing an order.
-
-Expects two parameters: the first the url of the file to use to create the model. The second parameter is the units of the uploaded file ("mm", "in")
-
-    # Example request body
-    {
-        "file_url": <url of object file>,
-        "units": <units, "mm", etc>
-    }
-
-    # Example response
-    {
-        "user_id": 1,
-        "deletedAt": None,
-        "file_uri": "3c911686-4bbe-4fb7-b08e-354e88f1274b.stl",
-        "volume": 263703.684920517,
-        "updatedAt":"2015-06-15T15:23:21.122Z",
-        "y": 63.9124984741211,
-        "x": 155.777496337891,
-        "z": 110.86499786377,
-        "id": 25,
-        "createdAt": u'2015-06-15T15:23:21.122Z'
+    { 
+        rates: [{
+            value: 'pickup',
+            guaranteed: true,
+            display_name: 'Pickup',
+            price: 0,
+            est_delivery: 0,
+            additional_item_charge: 0 
+        }, { 
+            value: 'rate_9739688b70784834bdb2e1eb5afcdb38',
+            service: 'PRIORITY_OVERNIGHT',
+            guaranteed: true,
+            display_name: 'FedEx - Priority Overnight',
+            price: 27.38,
+            delivery_date: '2016-02-01T10:30:00Z',
+            additional_item_charge: 0 
+        }, { 
+            value: 'rate_ef3ab3182a3543be8cb0f70dde4a3c3e',
+            service: 'FEDEX_2_DAY',
+            guaranteed: true,
+            display_name: 'FedEx - Fedex 2 Day',
+            price: 18.28,
+            delivery_date: '2016-02-02T16:30:00Z',
+            additional_item_charge: 0 
+        }, { 
+            value: 'rate_0b011e90eb824e8ab72cbae2e4b7dda9',
+            service: 'FEDEX_GROUND',
+            guaranteed: false,
+            display_name: 'FedEx - Fedex Ground',
+            price: 7.22,
+            delivery_date: '2016-02-01T17:00:00.302Z',
+            additional_item_charge: 0 
+        }]
     }
 
 ### POST /order/create
 Creates an order on the server. Response contains the quote for that order.
 
-Expects two parameters, a list of items to order and an address to ship them to. See the example:
+Expects two parameters, a list of items to order and a shipment id (the "value" field in a rate). See the example:
 
-Material IDs are discovered using the /materials endpoint.
-
-    # Example request body
+    # Example request body    
     {
-        "order_items": {
-            [{"material": 34, "id": 25, "qty": 1}],
-        },
+        "models": [
+            {"material_id": 44, "model_id": 1696, "qty": 1, units: "mm"}
+        ],
 
-        "shipping_info": {
-            "city": "Test city",
-            "name": "Test name",
-            "zip": "12345",
-            "street1": "123 Test Rd",
-            "street2": "#1", # optional!
-            "state": "AK",
-            "country": "USA"
-        }
+        "shipment_id": "rate_0b011e90eb824e8ab72cbae2e4b7dda9"
     }
 
     # Response
-    {
-        "quote_id": "123456",
-        "quote": {
-            "items": 263814.55,
-            "total": 290196.01,
-            "tax": 26381.46,
-            "shipping": 0
+    { 
+        quote: { 
+            extras: <not used>,
+            items: 29.41,
+            shipping: 7.22,
+            total: 36.63 
         },
-        "shipping_info": {
-            "city": "Test city",
-            "name": "Test name",
-            "zip": "12345",
-            "street1": "123 Test Rd",
-            "street2": "#1", # optional!
-            "state": "AK",
-            "country": "USA"
-        }
-        "order_items": [
-            {"material": 34, "id": 25, "qty": 1}
-        ]
+        order_items: [{ 
+            qty: 1, material_id: 44, units: 'mm', id: 1696 
+        }],
+        shipping: { delivery: 'rate_0b011e90eb824e8ab72cbae2e4b7dda9' },
+        due_date: '2016-01-27T23:19:33.153Z',
+        quote_id: 'f02af79251d5018ac7afeba4e3bc1dd34ee1fdc6f12a883a23a6f317eff77ddf' 
     }
+
+The only important thing in the response is the quote_id, which will be used in the next step to confirm and place the order.
 
 ### POST /order/confirm
 Confirms an order. You will not be charged, and no items will be manufactured or delivered, until this endpoint is hit with a valid quote id. Quote ids are generated by /order/create.
 
-The endpoint accepts a single parameter, the id for the quote that you'd like to execute. On success, the response will echo back the details of the order. The response will be the same as /order/create, except that the quote_id field will be replaced with an order_id field.
+The endpoint accepts a single parameter, the id for the quote that you'd like to execute. On success, the response will echo back the details of the order.
 
     # Example request body
     {
-        "quote_id": "123456"
+        "quote_id": "f02af79251d5018ac7afeba4e3bc1dd34ee1fdc6f12a883a23a6f317eff77ddf"
     }
 
     # Response
-    {
-        "order_id": "99999",
-        "purchased": true,
-        "quote": {
-            "items": 263814.55,
-            "total": 290196.01,
-            "tax": 26381.46,
-            "shipping": 0
+    { 
+        quote: { 
+            extras: <not used>,
+            items: 29.41,
+            shipping: 7.22,
+            total: 36.63 
         },
-        "shipping_info": {
-            "city": "Test city",
-            "name": "Test name",
-            "zip": "12345",
-            "street1": "123 Test Rd",
-            "street2": "#1", # optional!
-            "state": "AK",
-            "country": "USA"
-        }
-        "order_items": [
-            {"material": 34, "id": 25, "qty": 1}
-        ]
+        order_items: [{ 
+            qty: 1, units: 'mm', id: 1696, material: <material details>
+        }],
+        shipping: 'rate_0b011e90eb824e8ab72cbae2e4b7dda9',
+        purchased: true,
+        order_id: 216 
     }
 
 
@@ -208,5 +208,7 @@ The endpoint accepts a single parameter, the id for the quote that you'd like to
 
 * POST /model to get a model id
 * GET /materials to find the desired material ID
-* POST /order/create with the model ID, material ID, and shipping address to receive a quote
+* GET /model/quote to get the price for a model in a given quantity, material, and units
+* POST /order/shipping to create and list shipping options for the order
+* POST /order/create with the model ID, material ID, and shipping option to receive a quote
 * POST /order/confirm with a quote id to confirm the order

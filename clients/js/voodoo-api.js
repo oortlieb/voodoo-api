@@ -1,6 +1,6 @@
 var request = require('request-promise');
 
-var VOODOO_KEY = "1f70ee9b6c03a01b2efb9c8a8db47b149797e8d499ffca2245a17e26b732a827";
+var VOODOO_KEY = "";
 
 function authRequest(options) {
     options.headers = {
