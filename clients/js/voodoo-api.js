@@ -1,6 +1,7 @@
 var request = require('request-promise');
 
 var VOODOO_KEY = "";
+var HOST = "https://staging-api.voodoomfg.com/api/1";
 
 function authRequest(options) {
     options.headers = {
@@ -14,7 +15,7 @@ function authRequest(options) {
 function createModel(modelUrl) {
     var options = {
         method: "POST",
-        url: "http://localhost:5001/api/1/model",
+        url: HOST + "/model",
         body: {
             file_url: modelUrl
         },
@@ -27,7 +28,7 @@ function createModel(modelUrl) {
 function getMaterials() {
     var options = {
         method: "GET",
-        url: "http://localhost:5001/api/1/materials",
+        url: HOST + "/materials",
         json: true
     };
 
@@ -37,7 +38,7 @@ function getMaterials() {
 function getItemQuote(model) {
     var options = {
         method: "GET",
-        url: "http://localhost:5001/api/1/model/quote",
+        url: HOST + "/model/quote",
         body: model,
         json: true
     };
@@ -48,7 +49,7 @@ function getItemQuote(model) {
 function getShippingOptions(models, shipping_address) {
     var options = {
         method: "POST",
-        url: "http://localhost:5001/api/1/order/shipping",
+        url: HOST + "/order/shipping",
         body: {
             models: models,
             shipping_address: shipping_address
@@ -62,7 +63,7 @@ function getShippingOptions(models, shipping_address) {
 function createOrder(models, shipment_id) {
     var options = {
         method: "POST",
-        url: "http://localhost:5001/api/1/order/create",
+        url: HOST + "/order/create",
         body: {
             models: models,
             shipment_id: shipment_id
@@ -76,7 +77,7 @@ function createOrder(models, shipment_id) {
 function confirmOrder(quote_id) {
     var options = {
         method: "POST",
-        url: "http://localhost:5001/api/1/order/confirm",
+        url: HOST + "/order/confirm",
         body: {
             quote_id: quote_id
         },
