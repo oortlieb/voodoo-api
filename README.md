@@ -45,12 +45,12 @@ Expects one parameters: the download url of the model you're creating.
     }
 
     # Example response
-    { 
+    {
         id: 1696,
         volume: 260616.764764193,
         x: 97.4320030212402,
         y: 122.105209350586,
-        z: 132.524459838867 
+        z: 132.524459838867
     }
 
 ### GET /materials
@@ -71,20 +71,65 @@ Gets the quote for a single model file for a given quantity, material, and unit 
 Expects four parameters, the model id, material id, quantity, and selected units.
 
     # Example request body
-    { 
+    {
         model_id: 1696,
         units: "mm",
         material_id: 44,
-        qty: 1 
+        qty: 1
     }
 
     # Response
-    { 
+    {
         model_id: 1696,
         units: "mm",
         material_id: 44,
         qty: 1,
         quote: 29.413041769720596,
+    }
+
+### GET /model/quote/attributes
+Gets the quote for a model with the given attributes.
+
+Expects eight parameters: the bounding box x, y, and z lengths, surface area, volume, material id, units, and desired quantity.
+
+Returns a single number, the cost of the quoted model in the given number of units.
+
+    # Parameters
+    {
+        x: number,
+        y: number,
+        z: number,
+        surface_area: number,
+        volume: number,
+        material_id: integer (from /materials endpoint),
+        units: string (['mm', 'cm', 'in']),
+        quantity: integer
+    }
+
+    # Example request
+    https://api.voodoomfg.com/model/quote/attributes?x=15&y=22&z=22.3&surface_area=100&volume=200&materal_id=7&units=cm&quantity=10
+
+    # Example response
+    22.71
+
+### GET /order/direct-print
+Redirects the user to the Voodoo Manufacturing checkout flow and loads the file downloadable at the provided url.
+
+Expects three parameters: the file_url where the file can be downloaded by the Voodoo Manufacturing checkout flow, an optional material_id, and an optional quantity. If material_id or quantity are omitted, then these values default to the default values in the Voodoo Manufacturing print flow.
+
+    # Parameters
+    {
+        file_url: url,
+        material_id: integer (from /materials endpoint),
+        quantity: integer
+    }
+
+    # Example request
+    https://api.voodoomfg.com/order/direct-print?file_url=https://exampleurl.com/file.stl&material_id=22&quantity=7
+
+    # Example response
+    {
+        redirect: https://voodoomfg.com/order/direct-print?file_url=https://exampleurl.com/file.stl&material_id=22&quantity=7
     }
 
 ### POST /order/shipping
@@ -110,38 +155,38 @@ Expects two parameters, a list of items to order and an address to ship them to.
     }
 
     # Response
-    { 
+    {
         rates: [{
             value: 'pickup',
             guaranteed: true,
             display_name: 'Pickup',
             price: 0,
             est_delivery: 0,
-            additional_item_charge: 0 
-        }, { 
+            additional_item_charge: 0
+        }, {
             value: 'rate_9739688b70784834bdb2e1eb5afcdb38',
             service: 'PRIORITY_OVERNIGHT',
             guaranteed: true,
             display_name: 'FedEx - Priority Overnight',
             price: 27.38,
             delivery_date: '2016-02-01T10:30:00Z',
-            additional_item_charge: 0 
-        }, { 
+            additional_item_charge: 0
+        }, {
             value: 'rate_ef3ab3182a3543be8cb0f70dde4a3c3e',
             service: 'FEDEX_2_DAY',
             guaranteed: true,
             display_name: 'FedEx - Fedex 2 Day',
             price: 18.28,
             delivery_date: '2016-02-02T16:30:00Z',
-            additional_item_charge: 0 
-        }, { 
+            additional_item_charge: 0
+        }, {
             value: 'rate_0b011e90eb824e8ab72cbae2e4b7dda9',
             service: 'FEDEX_GROUND',
             guaranteed: false,
             display_name: 'FedEx - Fedex Ground',
             price: 7.22,
             delivery_date: '2016-02-01T17:00:00.302Z',
-            additional_item_charge: 0 
+            additional_item_charge: 0
         }]
     }
 
@@ -160,19 +205,19 @@ Expects two parameters, a list of items to order and a shipment id (the "value" 
     }
 
     # Response
-    { 
-        quote: { 
+    {
+        quote: {
             extras: <not used>,
             items: 29.41,
             shipping: 7.22,
-            total: 36.63 
+            total: 36.63
         },
-        order_items: [{ 
-            qty: 1, material_id: 44, units: 'mm', id: 1696 
+        order_items: [{
+            qty: 1, material_id: 44, units: 'mm', id: 1696
         }],
         shipping: { delivery: 'rate_0b011e90eb824e8ab72cbae2e4b7dda9' },
         due_date: '2016-01-27T23:19:33.153Z',
-        quote_id: 'f02af79251d5018ac7afeba4e3bc1dd34ee1fdc6f12a883a23a6f317eff77ddf' 
+        quote_id: 'f02af79251d5018ac7afeba4e3bc1dd34ee1fdc6f12a883a23a6f317eff77ddf'
     }
 
 The only important thing in the response is the quote_id, which will be used in the next step to confirm and place the order.
@@ -188,21 +233,20 @@ The endpoint accepts a single parameter, the id for the quote that you'd like to
     }
 
     # Response
-    { 
-        quote: { 
+    {
+        quote: {
             extras: <not used>,
             items: 29.41,
             shipping: 7.22,
-            total: 36.63 
+            total: 36.63
         },
-        order_items: [{ 
+        order_items: [{
             qty: 1, units: 'mm', id: 1696, material: <material details>
         }],
         shipping: 'rate_0b011e90eb824e8ab72cbae2e4b7dda9',
         purchased: true,
-        order_id: 216 
+        order_id: 216
     }
-
 
 ## Example flow
 
@@ -212,3 +256,8 @@ The endpoint accepts a single parameter, the id for the quote that you'd like to
 * POST /order/shipping to create and list shipping options for the order
 * POST /order/create with the model ID, material ID, and shipping option to receive a quote
 * POST /order/confirm with a quote id to confirm the order
+
+## Example redirect flow
+
+* GET /model/quote/attributes to get the price for a model with the given x, y, z, surface_area, volume, material_id, units, and quantity
+* GET /order/direct-print to send the user to the Voodoo Manufacturing checkout flow with the file_url, material_id, and quantity
