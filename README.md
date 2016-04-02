@@ -107,7 +107,7 @@ Returns a single number, the cost of the quoted model in the given number of uni
     }
 
     # Example request
-    https://api.voodoomfg.com/model/quote/attributes?x=15&y=22&z=22.3&surface_area=100&volume=200&materal_id=7&units=cm&quantity=10
+    https://api.voodoomfg.com/model/quote/attributes?x=15&y=22&z=22.3&surface_area=100&volume=200&material_id=7&units=cm&quantity=10
 
     # Example response
     22.71
