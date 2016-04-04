@@ -1,5 +1,21 @@
 # Voodoo API
 
+## Example Integrations
+
+### Redirect flow
+
+* GET /model/quote/attributes to get the price for a model with the given x, y, z, surface_area, volume, material_id, units, and quantity
+* GET /order/direct-print to send the user to the Voodoo Manufacturing checkout flow with the file_url, material_id, and quantity
+
+### Custom API flow
+
+* POST /model to get a model id
+* GET /materials to find the desired material ID
+* GET /model/quote to get the price for a model in a given quantity, material, and units
+* POST /order/shipping to create and list shipping options for the order
+* POST /order/create with the model ID, material ID, and shipping option to receive a quote
+* POST /order/confirm with a quote id to confirm the order
+
 ## Authorization
 Every request must include the following headers:
 
@@ -247,17 +263,3 @@ The endpoint accepts a single parameter, the id for the quote that you'd like to
         purchased: true,
         order_id: 216
     }
-
-## Example flow
-
-* POST /model to get a model id
-* GET /materials to find the desired material ID
-* GET /model/quote to get the price for a model in a given quantity, material, and units
-* POST /order/shipping to create and list shipping options for the order
-* POST /order/create with the model ID, material ID, and shipping option to receive a quote
-* POST /order/confirm with a quote id to confirm the order
-
-## Example redirect flow
-
-* GET /model/quote/attributes to get the price for a model with the given x, y, z, surface_area, volume, material_id, units, and quantity
-* GET /order/direct-print to send the user to the Voodoo Manufacturing checkout flow with the file_url, material_id, and quantity
