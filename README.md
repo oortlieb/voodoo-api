@@ -84,23 +84,32 @@ Gets a list of available materials from the server.
 ### GET /model/quote
 Gets the quote for a single model file for a given quantity, material, and unit scale.
 
-Expects four parameters, the model id, material id, quantity, and selected units.
+Expects four parameters, the model id, material id, quantity, and selected units. Options may be passed as well to alter how your object is handled. Currently, the only available option is orientation. If you pass options[orientation]=true in the querystring, your object will be oriented when it enters our factory. There is an extra charge for this service.
 
     # Example request body
     {
         model_id: 1696,
         units: "mm",
         material_id: 44,
-        qty: 1
+        quantity: 1,
+        options: {
+            orientation: true
+        }
     }
 
     # Response
     {
-        model_id: 1696,
-        units: "mm",
-        material_id: 44,
-        qty: 1,
-        quote: 29.413041769720596,
+        "quote": 5.460000895012401
+        "filename": "filename.stl"
+        "material_id": 10
+        "units": "mm"
+        "model_id": 1223
+        "unit_cost": 1.0920001790024803
+        "quantity": 5
+        "options": {
+            "orientation": 7.5
+        }
+        "total": 12.960000895012401
     }
 
 ### GET /model/quote/attributes
@@ -108,7 +117,7 @@ Gets the quote for a model with the given attributes.
 
 Expects eight parameters: the bounding box x, y, and z lengths, surface area, volume, material id, units, and desired quantity.
 
-Returns a single number, the cost of the quoted model in the given number of units.
+Returns a single number, the cost of the quoted model in the given number of units. See /model/quote for a description of available the options.
 
     # Parameters
     {
@@ -119,14 +128,27 @@ Returns a single number, the cost of the quoted model in the given number of uni
         volume: number,
         material_id: integer (from /materials endpoint),
         units: string (['mm', 'cm', 'in']),
-        quantity: integer
+        quantity: integer,
+        options: {
+            orientation: boolean
+        }
     }
 
     # Example request
     https://api.voodoomfg.com/model/quote/attributes?x=15&y=22&z=22.3&surface_area=100&volume=200&material_id=7&units=cm&quantity=10
 
     # Example response
-    22.71
+    {
+        "quote": 5.460000895012401
+        "material_id": 10
+        "units": "mm"
+        "unit_cost": 1.0920001790024803
+        "quantity": 5
+        "options": {
+            "orientation": 7.5
+        }
+        "total": 12.960000895012401
+    }
 
 ### GET /order/direct-print
 Redirects the user to the Voodoo Manufacturing checkout flow and loads the file downloadable at the provided url.
