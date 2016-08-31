@@ -181,7 +181,7 @@ Expects two parameters, a list of items to order and an address to ship them to.
             {"material_id": 44, "model_id": 1696, "qty": 1, units: "mm"}
         ],
 
-        "shipping_info": {
+        "shipping_address": {
             "city": "Test city",
             "name": "Test name",
             "zip": "12345",
