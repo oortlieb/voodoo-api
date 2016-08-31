@@ -173,15 +173,16 @@ Expects three parameters: the file_url where the file can be downloaded by the V
 ### POST /order/shipping
 Creates a shipment for the uploaded items and returns a list of shipping options for that shipment.
 
-Expects two parameters, a list of items to order and an address to ship them to. Use the "value" field in each entry to select that shipping option in the next step (creating an order).
+Expects two parameters, a list of items to order and an address to ship them to. Use the "value" field in each entry to select that shipping option in the next step (creating an order). All fields in shipping address are required except for street2.
 
     # Example request body
     {
         "models": [
-            {"material_id": 44, "model_id": 1696, "qty": 1, units: "mm"}
+            {"material_id": 44, "model_id": 1696, "quantity": 1, units: "mm"}
         ],
 
         "shipping_address": {
+            "email": "test@voodoomfg.com",
             "city": "Test city",
             "name": "Test name",
             "zip": "12345",
@@ -236,7 +237,7 @@ Expects two parameters, a list of items to order and a shipment id (the "value" 
     # Example request body    
     {
         "models": [
-            {"material_id": 44, "model_id": 1696, "qty": 1, units: "mm"}
+            {"material_id": 44, "model_id": 1696, "quantity": 1, units: "mm"}
         ],
 
         "shipment_id": "rate_0b011e90eb824e8ab72cbae2e4b7dda9"
@@ -251,7 +252,7 @@ Expects two parameters, a list of items to order and a shipment id (the "value" 
             total: 36.63
         },
         order_items: [{
-            qty: 1, material_id: 44, units: 'mm', id: 1696
+            quantity: 1, material_id: 44, units: 'mm', id: 1696
         }],
         shipping: { delivery: 'rate_0b011e90eb824e8ab72cbae2e4b7dda9' },
         due_date: '2016-01-27T23:19:33.153Z',
@@ -279,7 +280,7 @@ The endpoint accepts a single parameter, the id for the quote that you'd like to
             total: 36.63
         },
         order_items: [{
-            qty: 1, units: 'mm', id: 1696, material: <material details>
+            quantity: 1, units: 'mm', id: 1696, material: <material details>
         }],
         shipping: 'rate_0b011e90eb824e8ab72cbae2e4b7dda9',
         purchased: true,
